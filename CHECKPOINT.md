@@ -10,8 +10,9 @@ Publishable Node 24 GitHub Action that reviews pull requests with the Antigravit
 
 - **`git init` was required** — this folder was not a repository.
 - **No push.** No git config changes. Hooks were not skipped.
-- **Checkpoint commit:** `_pending — filled immediately after the checkpoint commit_`
-- After that commit, `git status` is recorded in the Git status footer below.
+- **Source checkpoint:** `31c9716b66f56b028b4a51907db9f2db5f1abe2b` — first commit (scaffold, `src/`, tests, docs, workflows, README; no `dist/` yet).
+- **Bundle follow-up:** `671bfb19813fdcddbe3f8ac20c4598e52d03868c` — sibling commit that added `dist/` (ncc `index.js` + map + licenses) and small `run.ts` / `schema.ts` / `diff.test.ts` nits.
+- **This file’s hash fill-in:** recorded in the Git status footer after the commit that updates `CHECKPOINT.md`.
 
 ## agy spike (done — do not re-do unless the CLI version changes)
 
@@ -55,9 +56,9 @@ The briefing described an in-progress scaffold with partial `src/` and almost ev
 | `README.md` missing | **Present** |
 | `.pr-review.yml` missing | **Present** |
 | `npm install` not run | **Done** — `package-lock.json` exists; `node_modules/` is gitignored |
-| `dist/` bundle missing | **Still missing** — `npm run build` has not been run |
-| git init not done | This checkpoint runs it |
-| runner-docs / dogfood / publish not started | Docs + dogfood workflow + README **exist**; operational dogfood and `v1` publish remain |
+| `dist/` bundle missing | **Present** as of `671bfb1` (`dist/index.js`, map, `licenses.txt`, `sourcemap-register.js`) |
+| git init not done | **Done** this session |
+| runner-docs / dogfood / publish not started | Docs + dogfood workflow + README + `dist/` **exist**; operational dogfood and `v1` publish remain |
 
 ## File inventory
 
@@ -108,12 +109,11 @@ The briefing described an in-progress scaffold with partial `src/` and almost ev
 
 ### Missing / not done
 
-- **`dist/`** — ncc bundle. `action.yml` and CI both require `dist/index.js`. Next session: `npm run build` and commit `dist/`.
 - **Remote / push / `v1` tag** — no `git remote`, nothing published, Marketplace not listed.
-- **Operational dogfood** — workflow file exists, but no self-hosted runner is registered on this repo yet and the Action cannot run without `dist/`.
+- **Operational dogfood** — workflow file and `dist/` exist, but no self-hosted runner is registered on this repo yet. Follow `docs/self-hosted-runner-setup.md`.
 - **`examples/ai-review.yml`** still says `OWNER/pr-auto-review@v1` — replace when the repo has a GitHub remote and a `v1` tag.
 
-`node_modules/` exists on disk and is correctly gitignored. Do not commit it.
+`node_modules/` exists on disk and is correctly gitignored. Do not commit it. `dist/` is committed (required by CI).
 
 ## Known pitfalls (carry these into every later session)
 
@@ -135,14 +135,13 @@ Workspace: `D:\Working Space\Personal Projects\pr-auto-review`
 
 ```powershell
 cd "D:\Working Space\Personal Projects\pr-auto-review"
-git log -1 --oneline
+git log -3 --oneline
 npm ci
 npm test
 npm run typecheck
-npm run build
 ```
 
-Then commit `dist/` (ncc output: `index.js`, source map, `licenses.txt`) so CI and the Action entrypoint work.
+`dist/` is already committed. Re-run `npm run build` only if you change `src/`; then commit any `dist/` diff so CI’s `git diff --exit-code dist` stays green.
 
 Do not commit secrets or `node_modules/`. Open `PLAN.md` for the full spec and this file for where we stopped.
 
@@ -150,20 +149,18 @@ Do not commit secrets or `node_modules/`. Open `PLAN.md` for the full spec and t
 
 Do not restart the agy spike unless the installed CLI version is no longer 1.1.22.
 
-Code for stages **scaffold → github-layer → agy-layer → review-submission → config-guards → runner-docs** is on disk. What is left is build/publish/operate:
+Code for stages **scaffold → github-layer → agy-layer → review-submission → config-guards → runner-docs** is on disk, including `dist/`. What is left is verify/operate/publish:
 
-1. **Build `dist/`** — `npm run build`; commit the bundle so `action.yml` → `dist/index.js` is real and `.github/workflows/ci.yml` can pass `git diff --exit-code dist`.
-2. **Verify tests locally** — `npm test` (unit tests exist but were not necessarily run in this checkpoint session).
-3. **Dogfood (operational)** — register a self-hosted runner labeled `antigravity` as the same OS user as the agy login (see `docs/self-hosted-runner-setup.md`). Open a PR on this repo so `self-review.yml` runs. Tune the prompt if signal-to-noise is poor.
-4. **Publish** — add a GitHub remote, push, create a moving `v1` tag, replace `OWNER` in `examples/ai-review.yml` / README, optional Marketplace listing.
+1. **Verify tests locally** — `npm ci && npm test && npm run typecheck` (not necessarily run in this checkpoint session).
+2. **Dogfood (operational)** — register a self-hosted runner labeled `antigravity` as the same OS user as the agy login (see `docs/self-hosted-runner-setup.md`). Open a PR on this repo so `self-review.yml` runs. Tune the prompt if signal-to-noise is poor.
+3. **Publish** — add a GitHub remote, push, create a moving `v1` tag, replace `OWNER` in `examples/ai-review.yml` / README, optional Marketplace listing.
 
 ## Suggested next-session order
 
-1. `npm ci && npm test && npm run build`
-2. Commit `dist/`
-3. Follow `docs/self-hosted-runner-setup.md` and dogfood `self-review.yml`
-4. Push and tag `v1` when a remote exists
+1. `npm ci && npm test`
+2. Follow `docs/self-hosted-runner-setup.md` and dogfood `self-review.yml`
+3. Push and tag `v1` when a remote exists
 
 ## Git status footer
 
-_Filled after `git commit`._
+_Filled after the CHECKPOINT.md hash-update commit._
