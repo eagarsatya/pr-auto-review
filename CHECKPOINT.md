@@ -13,6 +13,8 @@ Publishable Node 24 GitHub Action that reviews pull requests with the Antigravit
 - **Source checkpoint:** `31c9716b66f56b028b4a51907db9f2db5f1abe2b` — first commit (scaffold, `src/`, tests, docs, workflows, README; no `dist/` yet).
 - **Bundle follow-up:** `671bfb19813fdcddbe3f8ac20c4598e52d03868c` — sibling commit that added `dist/` (ncc `index.js` + map + licenses) and small `run.ts` / `schema.ts` / `diff.test.ts` nits.
 - **This file’s hash fill-in:** `792908b281d76f411657cb93756edd9b9f362752` — updates `CHECKPOINT.md` with the hashes above.
+- **HEAD when you left:** `bb576d6938c434fe26265326a9f58952435f9ea2` — git-status footer commit.
+- **Local tag `v1`** exists and points at the bundled Action (`671bfb1`). It has **not** been pushed.
 
 ## agy spike (done — do not re-do unless the CLI version changes)
 
@@ -58,7 +60,7 @@ The briefing described an in-progress scaffold with partial `src/` and almost ev
 | `npm install` not run | **Done** — `package-lock.json` exists; `node_modules/` is gitignored |
 | `dist/` bundle missing | **Present** as of `671bfb1` (`dist/index.js`, map, `licenses.txt`, `sourcemap-register.js`) |
 | git init not done | **Done** this session |
-| runner-docs / dogfood / publish not started | Docs + dogfood workflow + README + `dist/` **exist**; operational dogfood and `v1` publish remain |
+| runner-docs / dogfood / publish not started | Docs + dogfood workflow + README + `dist/` + local **`v1` tag** exist; operational dogfood and remote/push remain |
 
 ## File inventory
 
@@ -109,9 +111,9 @@ The briefing described an in-progress scaffold with partial `src/` and almost ev
 
 ### Missing / not done
 
-- **Remote / push / `v1` tag** — no `git remote`, nothing published, Marketplace not listed.
+- **Remote / push** — no `git remote`, nothing published, Marketplace not listed. Local tag **`v1` already exists**.
 - **Operational dogfood** — workflow file and `dist/` exist, but no self-hosted runner is registered on this repo yet. Follow `docs/self-hosted-runner-setup.md`.
-- **`examples/ai-review.yml`** still says `OWNER/pr-auto-review@v1` — replace when the repo has a GitHub remote and a `v1` tag.
+- **`examples/ai-review.yml`** still says `OWNER/pr-auto-review@v1` — replace `OWNER` when the repo has a GitHub remote.
 
 `node_modules/` exists on disk and is correctly gitignored. Do not commit it. `dist/` is committed (required by CI).
 
@@ -153,13 +155,13 @@ Code for stages **scaffold → github-layer → agy-layer → review-submission 
 
 1. **Verify tests locally** — `npm ci && npm test && npm run typecheck` (not necessarily run in this checkpoint session).
 2. **Dogfood (operational)** — register a self-hosted runner labeled `antigravity` as the same OS user as the agy login (see `docs/self-hosted-runner-setup.md`). Open a PR on this repo so `self-review.yml` runs. Tune the prompt if signal-to-noise is poor.
-3. **Publish** — add a GitHub remote, push, create a moving `v1` tag, replace `OWNER` in `examples/ai-review.yml` / README, optional Marketplace listing.
+3. **Publish** — add a GitHub remote, `git push -u origin master --tags` (local `v1` already exists), replace `OWNER` in `examples/ai-review.yml` / README, optional Marketplace listing.
 
 ## Suggested next-session order
 
 1. `npm ci && npm test`
 2. Follow `docs/self-hosted-runner-setup.md` and dogfood `self-review.yml`
-3. Push and tag `v1` when a remote exists
+3. Push `master` and the existing `v1` tag when a remote exists
 
 ## Git status footer
 
@@ -170,10 +172,9 @@ On branch master
 nothing to commit, working tree clean
 ```
 
-Resume from **HEAD on `master`**. The three commits to know:
+Resume from **HEAD on `master`**. Commits to know:
 
 1. `31c9716b66f56b028b4a51907db9f2db5f1abe2b` — source checkpoint (`git init` root commit)
-2. `671bfb19813fdcddbe3f8ac20c4598e52d03868c` — `dist/` bundle
-3. `792908b281d76f411657cb93756edd9b9f362752` — this brief’s hashes written into `CHECKPOINT.md`
-
-A later tiny commit may only exist to keep this footer in the same tree as HEAD.
+2. `671bfb19813fdcddbe3f8ac20c4598e52d03868c` — `dist/` bundle (local tag `v1` points here)
+3. `792908b281d76f411657cb93756edd9b9f362752` — hashes written into `CHECKPOINT.md`
+4. `bb576d6938c434fe26265326a9f58952435f9ea2` — git-status footer (HEAD when the checkpoint agent finished)
