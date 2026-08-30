@@ -1,0 +1,10 @@
+@@ -8,7 +8,8 @@
+ export function login(user: string) {
+   const session = createSession(user);
+   if (!session) {
+     throw new Error("no session");
+   }
+-  return session;
++  const token = sign(session);
++  return token;
+ }

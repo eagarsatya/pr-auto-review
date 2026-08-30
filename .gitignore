@@ -1,0 +1,25 @@
+node_modules/
+coverage/
+*.tsbuildinfo
+.env
+.env.*
+!.env.example
+
+# Local research dumps and OS junk
+agent-tools/
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Editor
+.idea/
+.vscode/
+*.swp
+
+# Logs / temp
+*.log
+tmp/
+temp/
+
+# Keep the compiled action; ignore accidental local builds elsewhere
+*.tgz

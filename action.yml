@@ -1,0 +1,111 @@
+name: Antigravity PR Review
+description: Review pull requests with the Antigravity CLI (agy) on a self-hosted runner and post inline GitHub comments.
+author: pr-auto-review
+branding:
+  icon: check-circle
+  color: purple
+
+inputs:
+  github-token:
+    description: Token used to read the PR diff and post the review. Use secrets.GITHUB_TOKEN.
+    required: true
+  model:
+    description: agy model slug for large PRs (see `agy models`). Overridden by .pr-review.yml when unset here.
+    required: false
+    default: ""
+  small-pr-model:
+    description: agy model slug used when the PR is below the large-PR size threshold.
+    required: false
+    default: ""
+  effort:
+    description: Reasoning effort passed to agy (low, medium, high).
+    required: false
+    default: ""
+  print-timeout:
+    description: Maximum time to wait for agy (e.g. 15m).
+    required: false
+    default: ""
+  sandbox:
+    description: If true, pass --sandbox to agy.
+    required: false
+    default: ""
+  max-files:
+    description: Skip review when the filtered file count exceeds this.
+    required: false
+    default: ""
+  max-diff-bytes:
+    description: Skip review when the combined patch size exceeds this.
+    required: false
+    default: ""
+  min-changed-lines:
+    description: Skip review when total added+deleted lines are below this.
+    required: false
+    default: ""
+  max-comments:
+    description: Maximum inline review comments to post (ranked by severity then confidence).
+    required: false
+    default: ""
+  min-confidence:
+    description: Drop findings below this confidence (0-1).
+    required: false
+    default: ""
+  min-severity:
+    description: Drop findings below this severity (low, medium, high, critical).
+    required: false
+    default: ""
+  skip-drafts:
+    description: If true, skip draft pull requests.
+    required: false
+    default: ""
+  skip-labels:
+    description: Comma-separated labels that skip the review (e.g. skip-review,dependencies).
+    required: false
+    default: ""
+  exclude:
+    description: Comma-separated glob patterns to exclude from the review.
+    required: false
+    default: ""
+  large-pr-threshold-files:
+    description: Use the large-PR model when filtered file count is at or above this.
+    required: false
+    default: ""
+  large-pr-threshold-bytes:
+    description: Use the large-PR model when combined patch size is at or above this.
+    required: false
+    default: ""
+  config-path:
+    description: Path to the YAML config file, relative to the workspace.
+    required: false
+    default: ".pr-review.yml"
+  working-directory:
+    description: Directory passed to agy as cwd. Defaults to the GitHub workspace.
+    required: false
+    default: ""
+  agy-path:
+    description: Absolute path to the agy binary. Auto-detected when empty.
+    required: false
+    default: ""
+  gemini-api-key:
+    description: Optional Gemini API key fallback (metered pay-per-token billing, NOT the Antigravity subscription). Only used when set.
+    required: false
+    default: ""
+  pull-request-number:
+    description: Override the PR number (for workflow_dispatch). Defaults to the triggering pull request.
+    required: false
+    default: ""
+
+outputs:
+  verdict:
+    description: Model verdict (approve, comment, request_changes) or skip/quota.
+  finding-count:
+    description: Number of findings after filtering, before the comment cap.
+  posted-count:
+    description: Number of inline comments actually posted.
+  model:
+    description: Model slug used for this run.
+  skipped:
+    description: Why the review was skipped, if it was.
+
+runs:
+  using: node24
+  main: dist/index.js

@@ -1,0 +1,32 @@
+# Copy this file to .github/workflows/ai-review.yml in a consumer repo.
+# The job MUST run on a self-hosted runner where `agy` is installed and
+# authenticated as the same OS user. See docs/self-hosted-runner-setup.md.
+
+name: AI PR Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: ai-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: [self-hosted, antigravity]
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: OWNER/pr-auto-review@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          # Optional overrides; prefer .pr-review.yml in the consumer repo.
+          # model: gemini-3.1-pro-high
+          # effort: high

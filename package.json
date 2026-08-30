@@ -1,0 +1,36 @@
+{
+  "name": "pr-auto-review",
+  "version": "1.0.0",
+  "description": "Self-hosted GitHub Action that reviews pull requests with the Antigravity CLI (agy), funded by a Google AI Pro subscription.",
+  "private": true,
+  "main": "dist/index.js",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "ncc build src/main.ts -o dist --source-map --license licenses.txt",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test tests/*.test.ts",
+    "all": "npm run typecheck && npm run test && npm run build"
+  },
+  "keywords": [
+    "github-action",
+    "pull-request",
+    "code-review",
+    "antigravity",
+    "agy"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@actions/core": "^1.11.1",
+    "@actions/github": "^6.0.1",
+    "minimatch": "^9.0.5",
+    "yaml": "^2.8.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.16.0",
+    "@vercel/ncc": "^0.38.3",
+    "tsx": "^4.20.3",
+    "typescript": "^5.9.2"
+  }
+}

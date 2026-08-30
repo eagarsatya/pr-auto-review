@@ -1,0 +1,30 @@
+# Config for this repository's own self-review workflow.
+# Action inputs override these values when set.
+
+model: gemini-3.1-pro-high
+small-pr-model: gemini-3.6-flash-medium
+effort: high
+print-timeout: 15m
+sandbox: false
+
+max-files: 40
+max-diff-bytes: 400000
+min-changed-lines: 4
+max-comments: 20
+min-confidence: 0.7
+min-severity: medium
+
+skip-drafts: true
+skip-labels:
+  - skip-review
+  - dependencies
+
+large-pr-threshold-files: 8
+large-pr-threshold-bytes: 40000
+
+exclude:
+  - "**/package-lock.json"
+  - "**/dist/**"
+  - "**/coverage/**"
+  - "**/*.snap"
+  - "docs/spike-agy.md"

@@ -1,0 +1,30 @@
+name: AI PR Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: ai-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    # Never let fork PRs execute on a self-hosted runner (they would run
+    # attacker-controlled workflow code on a machine that holds your agy keyring).
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: [self-hosted, antigravity]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Review with Antigravity
+        uses: ./
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
