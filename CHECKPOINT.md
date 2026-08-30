@@ -12,7 +12,7 @@ Publishable Node 24 GitHub Action that reviews pull requests with the Antigravit
 - **No push.** No git config changes. Hooks were not skipped.
 - **Source checkpoint:** `31c9716b66f56b028b4a51907db9f2db5f1abe2b` — first commit (scaffold, `src/`, tests, docs, workflows, README; no `dist/` yet).
 - **Bundle follow-up:** `671bfb19813fdcddbe3f8ac20c4598e52d03868c` — sibling commit that added `dist/` (ncc `index.js` + map + licenses) and small `run.ts` / `schema.ts` / `diff.test.ts` nits.
-- **This file’s hash fill-in:** recorded in the Git status footer after the commit that updates `CHECKPOINT.md`.
+- **This file’s hash fill-in:** `792908b281d76f411657cb93756edd9b9f362752` — updates `CHECKPOINT.md` with the hashes above.
 
 ## agy spike (done — do not re-do unless the CLI version changes)
 
@@ -163,4 +163,17 @@ Code for stages **scaffold → github-layer → agy-layer → review-submission 
 
 ## Git status footer
 
-_Filled after the CHECKPOINT.md hash-update commit._
+Immediately after `792908b281d76f411657cb93756edd9b9f362752`:
+
+```
+On branch master
+nothing to commit, working tree clean
+```
+
+Resume from **HEAD on `master`**. The three commits to know:
+
+1. `31c9716b66f56b028b4a51907db9f2db5f1abe2b` — source checkpoint (`git init` root commit)
+2. `671bfb19813fdcddbe3f8ac20c4598e52d03868c` — `dist/` bundle
+3. `792908b281d76f411657cb93756edd9b9f362752` — this brief’s hashes written into `CHECKPOINT.md`
+
+A later tiny commit may only exist to keep this footer in the same tree as HEAD.
