@@ -1,7 +1,6 @@
 export const FINDINGS_SCHEMA = {
   type: "object",
   required: ["summary", "verdict", "findings"],
-  additionalProperties: false,
   properties: {
     summary: { type: "string" },
     verdict: {
@@ -22,7 +21,6 @@ export const FINDINGS_SCHEMA = {
           "body",
           "confidence",
         ],
-        additionalProperties: false,
         properties: {
           path: { type: "string" },
           line: { type: "integer" },

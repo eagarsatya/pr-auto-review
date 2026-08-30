@@ -59,8 +59,8 @@ describe("parsePatch", () => {
 describe("annotatePatch", () => {
   it("tags added lines with RIGHT and removed lines with LEFT", () => {
     const annotated = annotatePatch("src/auth.ts", load("modified-file.patch"));
-    assert.match(annotated, /\[RIGHT 12\] \+.*token/);
-    assert.match(annotated, /\[LEFT {2}\d+\] -/);
+    assert.match(annotated, /\[RIGHT 13\] \+.*token/);
+    assert.match(annotated, /\[LEFT {2}13\] -/);
   });
 });
 
