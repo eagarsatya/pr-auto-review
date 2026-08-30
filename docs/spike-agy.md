@@ -49,6 +49,16 @@ Confirmed. A run with `--output-format json --json-schema <file>` returns a JSON
 
 No drop on 1.1.22. Direct stdout, `>` redirect, and `|` pipe all returned the full JSON envelope. No pseudo-TTY wrapper is needed.
 
+## `--effort` vs model slugs
+
+`agy 1.1.22` rejects combining `--effort` with a slug that already ends in `-low`/`-medium`/`-high`:
+
+```
+invalid model selection (--model "gemini-3.6-flash-medium" --effort "high"): --model gemini-3.6-flash-medium conflicts with --effort=high
+```
+
+The Action omits `--effort` when the model slug already encodes it.
+
 ## Large prompts
 
 Windows command-line length is ~8191 characters, so `-p "<entire diff>"` will truncate real PRs. Confirmed working alternative:

@@ -1,10 +1,36 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { parseEnvelope, parseTimeoutMs } from "../src/agy/run";
+import { buildAgyArgs, parseEnvelope, parseTimeoutMs } from "../src/agy/run";
 import { FINDINGS_SCHEMA, findingsSchemaJson } from "../src/agy/schema";
 import { buildReviewPrompt } from "../src/agy/prompt";
 import { buildDiffContext } from "../src/github/diff";
 import type { PullFile } from "../src/types";
+
+describe("buildAgyArgs", () => {
+  it("omits --effort when the model slug already encodes effort", () => {
+    const args = buildAgyArgs({
+      schemaPath: "schema.json",
+      model: "gemini-3.6-flash-medium",
+      effort: "high",
+      printTimeout: "15m",
+      sandbox: false,
+    });
+    assert.equal(args.includes("--effort"), false);
+    assert.equal(args[args.indexOf("--model") + 1], "gemini-3.6-flash-medium");
+  });
+
+  it("passes --effort when the model slug has no effort suffix", () => {
+    const args = buildAgyArgs({
+      schemaPath: "schema.json",
+      model: "claude-sonnet-4-6",
+      effort: "high",
+      printTimeout: "15m",
+      sandbox: true,
+    });
+    assert.equal(args[args.indexOf("--effort") + 1], "high");
+    assert.ok(args.includes("--sandbox"));
+  });
+});
 
 describe("parseTimeoutMs", () => {
   it("parses m/s/h suffixes", () => {

@@ -24,7 +24,7 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - uses: OWNER/pr-auto-review@v1
+      - uses: eagarsatya/pr-auto-review@v1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           # Optional overrides; prefer .pr-review.yml in the consumer repo.

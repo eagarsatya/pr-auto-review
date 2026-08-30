@@ -11,7 +11,8 @@
     "build": "ncc build src/main.ts -o dist --source-map --license licenses.txt",
     "typecheck": "tsc --noEmit",
     "test": "tsx --test tests/*.test.ts",
-    "all": "npm run typecheck && npm run test && npm run build"
+    "all": "npm run typecheck && npm run test && npm run build",
+    "local-review": "tsx scripts/local-review.ts"
   },
   "keywords": [
     "github-action",

@@ -16,7 +16,7 @@ Full runner, auth, and fork-safety notes: [docs/self-hosted-runner-setup.md](doc
 
 1. Install `agy` on your workstation (or a VM you control) and sign in once. Confirm `agy models` works.
 2. Register a GitHub Actions self-hosted runner on that machine, running as the **same OS user**, with the label `antigravity`.
-3. Add the workflow below (or copy [examples/ai-review.yml](examples/ai-review.yml)). Replace `OWNER/pr-auto-review@v1` with this repository once you publish it.
+3. Add the workflow below (or copy [examples/ai-review.yml](examples/ai-review.yml)).
 
 ```yaml
 name: AI PR Review
@@ -40,7 +40,7 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - uses: OWNER/pr-auto-review@v1
+      - uses: eagarsatya/pr-auto-review@v1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 ```
@@ -99,7 +99,16 @@ npm test
 npm run build
 ```
 
+Review a local diff with the same `agy` pipeline (no GitHub, uses your keyring quota):
+
+```bash
+npm run local-review -- --fixture tests/fixtures/modified-file.patch --path src/auth.ts
+git diff | npm run local-review -- --stdin
+```
+
 CI fails if `dist/` is not committed and current. The Action runtime is Node 24 (`runs.using: node24`).
+
+Pin consumers at `eagarsatya/pr-auto-review@v1`. The GitHub repo is private so this Action's self-hosted runner is not exposed to fork PRs from the public internet. Make it public only if you intend to publish to the Marketplace and have the fork-safety guards in place.
 
 ## Marketplace
 

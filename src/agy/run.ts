@@ -42,6 +42,35 @@ function parseEnvelope(stdout: string): AgyEnvelope {
   throw new Error("agy produced no JSON envelope on stdout");
 }
 
+const MODEL_EFFORT_SUFFIX = /-(low|medium|high)$/i;
+
+export function buildAgyArgs(options: {
+  schemaPath: string;
+  model: string;
+  effort: ReviewConfig["effort"];
+  printTimeout: string;
+  sandbox: boolean;
+}): string[] {
+  const args = [
+    "--input-format",
+    "stream-json",
+    "--output-format",
+    "stream-json",
+    "--json-schema",
+    options.schemaPath,
+    "--model",
+    options.model,
+  ];
+  // agy 1.1.22 rejects `--effort` when the model slug already encodes it
+  // (`gemini-3.6-flash-medium` + `--effort high` → conflict).
+  if (!MODEL_EFFORT_SUFFIX.test(options.model)) {
+    args.push("--effort", options.effort);
+  }
+  args.push("--print-timeout", options.printTimeout);
+  if (options.sandbox) args.push("--sandbox");
+  return args;
+}
+
 function spawnAgy(options: {
   agyPath: string;
   args: string[];
@@ -99,21 +128,13 @@ export async function runAgyReview(options: {
   const schemaPath = join(tmp, "schema.json");
   writeFileSync(schemaPath, findingsSchemaJson(), "utf8");
 
-  const args = [
-    "--input-format",
-    "stream-json",
-    "--output-format",
-    "stream-json",
-    "--json-schema",
+  const args = buildAgyArgs({
     schemaPath,
-    "--model",
-    options.model,
-    "--effort",
-    options.config.effort,
-    "--print-timeout",
-    options.config.printTimeout,
-  ];
-  if (options.config.sandbox) args.push("--sandbox");
+    model: options.model,
+    effort: options.config.effort,
+    printTimeout: options.config.printTimeout,
+    sandbox: options.config.sandbox,
+  });
 
   const stdin = `${JSON.stringify({
     event: "user",

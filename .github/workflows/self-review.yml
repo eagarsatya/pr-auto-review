@@ -3,6 +3,12 @@ name: AI PR Review
 on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
+    inputs:
+      pull-request-number:
+        description: PR number to review (required for manual runs)
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -28,3 +34,4 @@ jobs:
         uses: ./
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          pull-request-number: ${{ github.event.inputs.pull-request-number }}

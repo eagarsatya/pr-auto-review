@@ -30527,6 +30527,7 @@ ${files || "(no textual diff)"}
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.buildAgyArgs = buildAgyArgs;
 exports.runAgyReview = runAgyReview;
 exports.parseEnvelope = parseEnvelope;
 exports.parseTimeoutMs = parseTimeoutMs;
@@ -30574,6 +30575,28 @@ function parseEnvelope(stdout) {
     }
     throw new Error("agy produced no JSON envelope on stdout");
 }
+const MODEL_EFFORT_SUFFIX = /-(low|medium|high)$/i;
+function buildAgyArgs(options) {
+    const args = [
+        "--input-format",
+        "stream-json",
+        "--output-format",
+        "stream-json",
+        "--json-schema",
+        options.schemaPath,
+        "--model",
+        options.model,
+    ];
+    // agy 1.1.22 rejects `--effort` when the model slug already encodes it
+    // (`gemini-3.6-flash-medium` + `--effort high` → conflict).
+    if (!MODEL_EFFORT_SUFFIX.test(options.model)) {
+        args.push("--effort", options.effort);
+    }
+    args.push("--print-timeout", options.printTimeout);
+    if (options.sandbox)
+        args.push("--sandbox");
+    return args;
+}
 function spawnAgy(options) {
     return new Promise((resolve, reject) => {
         const child = (0, node_child_process_1.spawn)(options.agyPath, options.args, {
@@ -30613,22 +30636,13 @@ async function runAgyReview(options) {
     const tmp = (0, node_fs_1.mkdtempSync)((0, node_path_1.join)((0, node_os_1.tmpdir)(), "pr-auto-review-"));
     const schemaPath = (0, node_path_1.join)(tmp, "schema.json");
     (0, node_fs_1.writeFileSync)(schemaPath, (0, schema_1.findingsSchemaJson)(), "utf8");
-    const args = [
-        "--input-format",
-        "stream-json",
-        "--output-format",
-        "stream-json",
-        "--json-schema",
+    const args = buildAgyArgs({
         schemaPath,
-        "--model",
-        options.model,
-        "--effort",
-        options.config.effort,
-        "--print-timeout",
-        options.config.printTimeout,
-    ];
-    if (options.config.sandbox)
-        args.push("--sandbox");
+        model: options.model,
+        effort: options.config.effort,
+        printTimeout: options.config.printTimeout,
+        sandbox: options.config.sandbox,
+    });
     const stdin = `${JSON.stringify({
         event: "user",
         message: { content: options.prompt },

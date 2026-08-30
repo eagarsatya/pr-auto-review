@@ -151,11 +151,13 @@ Do not commit secrets or `node_modules/`. Open `PLAN.md` for the full spec and t
 
 Do not restart the agy spike unless the installed CLI version is no longer 1.1.22.
 
-Code for stages **scaffold → github-layer → agy-layer → review-submission → config-guards → runner-docs** is on disk, including `dist/`. What is left is verify/operate/publish:
+**Verified this session (2026-08-30 evening):** `npm test` (42 passing), `npm run typecheck`, `npm run build`. Live dogfood via `npx tsx scripts/local-review.ts tests/fixtures/modified-file.patch src/auth.ts` returned `verdict: approve` using `agy` 1.1.22 + `gemini-3.6-flash-medium` (subscription keyring).
 
-1. **Verify tests locally** — `npm ci && npm test && npm run typecheck` (not necessarily run in this checkpoint session).
-2. **Dogfood (operational)** — register a self-hosted runner labeled `antigravity` as the same OS user as the agy login (see `docs/self-hosted-runner-setup.md`). Open a PR on this repo so `self-review.yml` runs. Tune the prompt if signal-to-noise is poor.
-3. **Publish** — add a GitHub remote, `git push -u origin master --tags` (local `v1` already exists), replace `OWNER` in `examples/ai-review.yml` / README, optional Marketplace listing.
+**Bug found and fixed:** `agy` 1.1.22 rejects `--effort high` when the model slug already ends in `-medium`/`-high`/`-low`. `buildAgyArgs` now omits `--effort` in that case.
+
+Still left after publish:
+
+1. **Dogfood (GitHub Actions)** — register a self-hosted runner labeled `antigravity` as the same OS user as the agy login (`docs/self-hosted-runner-setup.md`) and open a PR so `self-review.yml` runs. Local review script already exercises the same pipeline.
 
 ## Suggested next-session order
 
